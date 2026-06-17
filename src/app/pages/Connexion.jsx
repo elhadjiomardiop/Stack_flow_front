@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const URL_FRONT = import.meta.env.VITE_URL_FRONT
+const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  import.meta.env.VITE_URL_FRONT ||
+  'http://localhost:3000';
 
 const Connexion = () => {
   const [email, setEmail] = useState('');
@@ -23,9 +26,7 @@ const Connexion = () => {
     };
 
     try {
-      const response = await fetch(`${URL_FRONT}/api/auth/connexion`, 
-        // const response = await fetch('https://stack-flow-back.onrender.com/api/auth/connexion',
-         {
+      const response = await fetch(`${API_BASE}/api/auth/connexion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
