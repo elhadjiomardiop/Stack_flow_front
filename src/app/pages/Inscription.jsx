@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+const URL_FRONT = import.meta.env.VITE_URL_FRONT
 
 const Inscription = () => {
   const [email, setEmail] = useState('');
@@ -25,7 +26,7 @@ const Inscription = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/inscription', {
+      const response = await fetch(`${URL_FRONT}/api/auth/inscription`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
