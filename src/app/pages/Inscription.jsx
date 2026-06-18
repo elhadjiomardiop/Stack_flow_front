@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const API_BASE =
-  import.meta.env.VITE_URL_FRONT
+  import.meta.env.VITE_URL_FRONT || "https://stack-flow-back.onrender.com"
 
 
 const Inscription = () => {
