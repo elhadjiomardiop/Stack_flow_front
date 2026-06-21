@@ -1,65 +1,62 @@
-import QuestionCard from "./QuestionCard";
+import { NavLink } from 'react-router-dom';
+import QuestionCard from './QuestionCard';
+import { communityStats, questions } from '../data/questions';
 
 const Questions = () => {
-  const questions = [
-    {
-      id: 1,
-      titre: "Comment utiliser useEffect dans React pour récupérer des données ?",
-      description:
-        "Je débute avec React et je souhaite récupérer des données depuis une API avec useEffect.",
-      heure: "09:15",
-      auteur: "Aminata Ndiaye",
-    },
-    {
-      id: 2,
-      titre: "Pourquoi mon serveur Express retourne une erreur 404 ?",
-      description:
-        "J'ai créé une route GET /users mais lorsque je fais une requête depuis Postman, je reçois une erreur 404.",
-      heure: "10:30",
-      auteur: "Mamadou Diallo",
-    },
-    {
-      id: 3,
-      titre: "Comment connecter Spring Boot à une base de données MySQL ?",
-      description:
-        "Mon application Spring Boot ne parvient pas à se connecter à MySQL.",
-      heure: "11:45",
-      auteur: "Fatou Sow",
-    },
-    {
-      id: 4,
-      titre: "Quelle est la différence entre let, const et var en JavaScript ?",
-      description:
-        "Je vois souvent ces trois mots-clés dans les exemples JavaScript.",
-      heure: "14:20",
-      auteur: "Cheikh Ba",
-    },
-    {
-      id: 5,
-      titre: "Comment créer une authentification JWT avec Node.js ?",
-      description:
-        "Je développe une API avec Express et je souhaite sécuriser mes routes avec JWT.",
-      heure: "16:05",
-      auteur: "Khadija Fall",
-    },
-  ];
-
   return (
-    <section className="w-full">
-      <div className="mb-6 flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Les questions</h1>
-        <p className="max-w-2xl text-sm text-slate-600 sm:text-base">
-          Parcours les discussions récentes et trouve rapidement une réponse ou une piste de solution.
-        </p>
+    <section className="w-full space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+            Questions récentes
+          </h1>
+          <p className="max-w-2xl text-sm text-slate-600 sm:text-base">
+            Parcours les discussions de la communauté et ouvre une question pour voir tous ses détails.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 text-sm text-slate-500">
+          <span className="whitespace-nowrap">Trier par :</span>
+          <select className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 outline-none transition focus:border-violet-400 focus:ring-4 focus:ring-violet-100">
+            <option>Les plus récentes</option>
+            <option>Les plus votées</option>
+            <option>Les plus répondues</option>
+          </select>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {questions.map((question) => (
-          <QuestionCard
-            key={question.id}
-            question={question}
-          />
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {communityStats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <span className="grid h-11 w-11 place-items-center rounded-2xl bg-slate-50 text-lg">
+                <stat.icon className={`h-5 w-5 ${stat.accent}`} aria-hidden="true" />
+              </span>
+              <div>
+                <p className={`text-xl font-black ${stat.accent}`}>{stat.value}</p>
+                <p className="text-sm text-slate-500">{stat.label}</p>
+              </div>
+            </div>
+          </div>
         ))}
+      </div>
+
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        {questions.map((question) => (
+          <QuestionCard key={question.id} question={question} />
+        ))}
+      </div>
+
+      <div className="flex justify-center pt-2">
+        <NavLink
+          to="/ajouter_question"
+          className="inline-flex items-center rounded-full border border-violet-200 bg-white px-5 py-2.5 text-sm font-semibold text-violet-700 shadow-sm transition hover:border-violet-300 hover:bg-violet-50"
+        >
+          Voir toutes les questions
+        </NavLink>
       </div>
     </section>
   );
