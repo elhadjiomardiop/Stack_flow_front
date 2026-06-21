@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const API_BASE =
-  import.meta.env.VITE_URL_FRONT || "https://stack-flow-back.onrender.com"
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 const Inscription = () => {
@@ -29,7 +28,7 @@ const Inscription = () => {
     };
 
     try {
-      const response = await fetch(`${API_BASE}/api/auth/inscription`, {
+      const response = await fetch(`${API_URL}/api/auth/inscription`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
