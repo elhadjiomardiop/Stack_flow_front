@@ -1,8 +1,29 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import QuestionCard from './QuestionCard';
-import { communityStats, questions } from '../data/questions';
+import { communityStats } from '../data/questions';
+import { getQuestions } from '../services/questionService';
 
 const Questions = () => {
+
+  const [questions, setQuestions] = useState([]);
+
+  useEffect(() => {
+  const fetchQuestions = async () => {
+    try {
+      const data = await getQuestions();
+
+      console.log("Questions récupérées :", data);
+
+      setQuestions(data.questions);
+    } catch (error) {
+      console.error("Erreur lors du chargement des questions :", error);
+    }
+  };
+
+  fetchQuestions();
+}, []);
+
   return (
     <section className="w-full space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -46,7 +67,7 @@ const Questions = () => {
 
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {questions.map((question) => (
-          <QuestionCard key={question.id} question={question} />
+          <QuestionCard key={question._id} question={question} />
         ))}
       </div>
 

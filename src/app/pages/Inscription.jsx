@@ -28,7 +28,7 @@ const Inscription = () => {
     };
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/inscription`, {
+      const response = await fetch(`${API_URL}/auth/inscription`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,51 +1,31 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Connexion from './app/pages/Connexion';
 import Inscription from './app/pages/Inscription';
 import UserLayout from './app/layout/UserLayout';
 import Accueil from './app/pages/Accueil';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Profil from './app/pages/Profil';
 import Detail from './app/pages/Detail';
 import QuestionForm from './app/pages/QuestionForm';
+import ErrorBoundary from './composants/ErrorBoundary';
 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <UserLayout />,
+    errorElement: <ErrorBoundary />,
+    children: [
+      { index: true,              element: <Accueil /> },
+      { path: '/connexion',       element: <Connexion />,    errorElement: <ErrorBoundary /> },
+      { path: '/inscription',     element: <Inscription />,  errorElement: <ErrorBoundary /> },
+      { path: '/profil',          element: <Profil />,       errorElement: <ErrorBoundary /> },
+      { path: '/ajouter_question',element: <QuestionForm />, errorElement: <ErrorBoundary /> },
+      { path: '/detail/:id',      element: <Detail />,       errorElement: <ErrorBoundary /> },
+    ],
+  },
+]);
 
 const App = () => {
+  return <RouterProvider router={router} />;
+};
 
-     const router = createBrowserRouter([
-     
-   
-      //  route de l'accueil
-      { path:'/' , element:<UserLayout/> ,
-
-         children :[
-               {index:true , element:<Accueil/>},
-                //  route de la connexion
-               {path:'/connexion' , element:<Connexion/>},
-               //  route de l'inscription
-               {path:'/inscription' , element:<Inscription/>},
-                //  route de profil
-                 {path:'/profil' , element:<Profil/>},
-                //  route de creer question
-                 {path:'/ajouter_question' , element:<QuestionForm/>},
-                //  route de detail message
-               {path:'/detail/:id' , element:<Detail/>},
-              // {path:'/messages' , element:<Message/>},
-
-        ]
-        }
-
-
-
-
-
-    
-
-
-     ])
-
-
-  return (
-     <RouterProvider router={router} />
-  )
-}
-
-export default App
+export default App;

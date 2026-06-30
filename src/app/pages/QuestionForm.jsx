@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { FaBold, FaItalic, FaCode, FaLink, FaListUl, FaTag, FaTimes, FaInfoCircle, FaSpinner } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaBold, 
+  FaItalic, 
+  FaCode, 
+  FaLink, 
+  FaListUl, 
+  FaTag, 
+  FaTimes, 
+  FaInfoCircle, 
+  FaSpinner } from "react-icons/fa";
+import { createQuestion } from "../../services/questionService";
+import { toast } from 'react-toastify';
 
 const SUGGESTED_TAGS = [
   "javascript", "python", "react", "node.js", "css", "html",
@@ -7,13 +18,15 @@ const SUGGESTED_TAGS = [
 ];
 
 const QuestionForm = () => {
+
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   // ── Validation
   const validate = () => {
@@ -29,19 +42,38 @@ const QuestionForm = () => {
 
   // ── Soumission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errs = validate();
-    setErrors(errs);
-    if (Object.keys(errs).length) return;
-    setIsSubmitting(true);
-    // Remplacer par votre vrai appel API :
-    // await fetch("/api/questions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, description, tags }) });
-    await new Promise((r) => setTimeout(r, 1000));
-    setIsSubmitting(false);
-    setSubmitted(true);
-  };
+  e.preventDefault();
 
-  // ── Insérer markdown dans le textarea
+  console.log("Le formulaire a été soumis");
+
+  const errs = validate();
+  setErrors(errs);
+
+  if (Object.keys(errs).length) return;
+
+  toast.success("Question publiée avec succès !");
+  navigate("/");
+
+  try {
+
+    console.log("Envoi vers le backend...");
+    await createQuestion({
+      title,
+      description,
+      tags,
+    });
+
+    console.log("Réponse reçue");
+
+  } catch (error) {
+    console.error(error);
+    alert(error.message);
+
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+  // ── Insérer markdown dans le textarea++
   const insertMarkdown = (before, after = before) => {
     const ta = document.getElementById("description");
     if (!ta) return;
@@ -77,26 +109,6 @@ const QuestionForm = () => {
     }
   };
 
-  // ── Succès
-  if (submitted) {
-    return (
-      <div className="mx-auto flex min-h-screen w-full max-w-2xl items-center justify-center px-4">
-        <div className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <span className="text-3xl">✓</span>
-          </div>
-          <h2 className="text-2xl font-bold text-slate-900">Question publiée !</h2>
-          <p className="mt-2 text-slate-500">Votre question est en ligne et en attente de réponses.</p>
-          <button
-            onClick={() => { setTitle(""); setDescription(""); setTags([]); setErrors({}); setSubmitted(false); }}
-            className="mt-6 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Poser une autre question
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
@@ -127,7 +139,7 @@ const QuestionForm = () => {
               if (errors.title) setErrors((p) => ({ ...p, title: undefined }));
             }}
             placeholder="ex: Comment filtrer un tableau d'objets en JavaScript ?"
-            className={`w-full rounded-lg border px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full rounded-lg border px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 focus:ring-orange-500 ${
               errors.title ? "border-red-400 bg-red-50" : "border-slate-300"
             }`}
           />
@@ -189,7 +201,7 @@ const QuestionForm = () => {
               if (errors.description) setErrors((p) => ({ ...p, description: undefined }));
             }}
             placeholder={"Décrivez votre problème ici...\n\n- Contexte du problème\n- Ce que vous avez essayé\n- Message d'erreur exact\n\n```js\n// Votre code ici\n```"}
-            className={`w-full resize-y rounded-b-lg border px-4 py-3 font-mono text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full resize-y rounded-b-lg border px-4 py-3 font-mono text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 focus:ring-orange-500 ${
               errors.description ? "border-red-400 bg-red-50" : "border-slate-300"
             }`}
           />
@@ -225,10 +237,10 @@ const QuestionForm = () => {
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-blue-200"
+                  className="inline-flex items-center gap-1 rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-orange-700 ring-1 ring-orange-200"
                 >
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} className="text-blue-400 hover:text-blue-700">
+                  <button type="button" onClick={() => removeTag(tag)} className="text-orange-400 hover:text-orange-700">
                     <FaTimes size={9} />
                   </button>
                 </span>
@@ -243,7 +255,7 @@ const QuestionForm = () => {
               onChange={(e) => setTagInput(e.target.value)}
               onKeyDown={handleTagKeyDown}
               placeholder="ex: javascript, react…"
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm placeholder-slate-400 outline-none transition focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm placeholder-slate-400 outline-none transition focus:ring-2 focus:ring-orange-500 ${
                 errors.tags ? "border-red-400 bg-red-50" : "border-slate-300"
               }`}
             />
@@ -286,7 +298,7 @@ const QuestionForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 sm:w-auto"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-700 disabled:opacity-60 sm:w-auto"
           >
             {isSubmitting ? (
               <>
