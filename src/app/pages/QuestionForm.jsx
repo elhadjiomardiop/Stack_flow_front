@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { FaBold, 
   FaItalic, 
   FaCode, 
@@ -9,7 +9,11 @@ import { FaBold,
   FaTimes, 
   FaInfoCircle, 
   FaSpinner } from "react-icons/fa";
-import { createQuestion } from "../../services/questionService";
+import {
+  createQuestion,
+  getQuestionById,
+  updateQuestion,
+} from "../../services/questionService";
 import { toast } from 'react-toastify';
 
 const SUGGESTED_TAGS = [
@@ -21,12 +25,34 @@ const QuestionForm = () => {
 
   const navigate = useNavigate();
 
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+  if (!isEditMode) return;
+
+  const fetchQuestion = async () => {
+    try {
+      const data = await getQuestionById(id);
+
+      setTitle(data.question.title);
+      setDescription(data.question.description);
+      setTags(data.question.tags || []);
+    } catch (error) {
+        console.error(error);
+        toast.error("Impossible de charger la question.");
+      }
+    };
+
+    fetchQuestion();
+  }, [id, isEditMode]);
 
   // ── Validation
   const validate = () => {
@@ -51,17 +77,34 @@ const QuestionForm = () => {
 
   if (Object.keys(errs).length) return;
 
-  toast.success("Question publiée avec succès !");
-  navigate("/");
+  // toast.success("Question publiée avec succès !");
+  // navigate("/");
 
   try {
 
     console.log("Envoi vers le backend...");
-    await createQuestion({
-      title,
-      description,
-      tags,
-    });
+    let result;
+
+    if (isEditMode) {
+      result = await updateQuestion(id, {
+        title,
+        description,
+        tags,
+      });
+
+      toast.success("Question modifiée avec succès !");
+      navigate(`/detail/${id}`);
+
+    } else {
+      result = await createQuestion({
+        title,
+        description,
+        tags,
+      });
+
+      toast.success("Question publiée avec succès !");
+      navigate(`/detail/${result.question._id}`);
+    }
 
     console.log("Réponse reçue");
 
@@ -303,9 +346,11 @@ const QuestionForm = () => {
             {isSubmitting ? (
               <>
                 <FaSpinner className="animate-spin" size={13} />
-                Publication…
+                {isEditMode ? "Mise à jour..." : "Publication..."}
               </>
-            ) : "Publier la question"}
+            ) : (
+              isEditMode ? "Mettre à jour la question" : "Publier la question"
+            )}
           </button>
         </div>
 

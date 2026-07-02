@@ -19,6 +19,7 @@ const router = createBrowserRouter([
       { path: '/inscription',     element: <Inscription />,  errorElement: <ErrorBoundary /> },
       { path: '/profil',          element: <Profil />,       errorElement: <ErrorBoundary /> },
       { path: '/ajouter_question',element: <QuestionForm />, errorElement: <ErrorBoundary /> },
+      { path: '/modifier_question/:id', element: <QuestionForm />, errorElement: <ErrorBoundary /> },
       { path: '/detail/:id',      element: <Detail />,       errorElement: <ErrorBoundary /> },
     ],
   },
